@@ -1,16 +1,13 @@
 FROM oven/bun:latest
 
-# Set working directory
 WORKDIR /app
 
-# Copy project files
 COPY . .
 
-# Make your script executable
 RUN chmod +x start.sh
 
-# Install dependencies
 RUN bun install
 
-# Start both processes
+EXPOSE 5173
+
 CMD ["./start.sh"]
