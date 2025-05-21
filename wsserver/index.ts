@@ -104,9 +104,9 @@ function broadcastAnnouncement(
 
 	recentAnnouncements.push(announcement);
 	// Only keep last 1 announcement to avoid cluttering the UI
-		if (recentAnnouncements.length > 1) {
-			recentAnnouncements.shift();
-		}
+	if (recentAnnouncements.length > 1) {
+		recentAnnouncements.shift();
+	}
 
 	gameState.lastAnnouncementTime = Date.now();
 
@@ -187,11 +187,7 @@ function startNewRound(): void {
 			);
 		});
 
-		broadcastAnnouncement(
-			`Waiting for players...`,
-			'info',
-			2000
-		);
+		broadcastAnnouncement(`Waiting for players...`, 'info', 2000);
 		return;
 	}
 
@@ -255,11 +251,7 @@ function startNewRound(): void {
 		);
 	});
 
-	broadcastAnnouncement(
-		`Round ${gameState.roundNumber} started!`,
-		'success',
-		2000
-	);
+	broadcastAnnouncement(`Round ${gameState.roundNumber} started!`, 'success', 2000);
 
 	broadcastPlayerStates();
 }
@@ -334,14 +326,10 @@ function checkGameStatus(): void {
 		});
 
 		// Announce the winner
-				const winnerName = winner.id.substring(0, 8);
-				// Clear existing announcements before adding game over announcement
-				recentAnnouncements.length = 0;
-				broadcastAnnouncement(
-					`${winnerName} wins!`,
-					'success',
-					2000
-				);
+		const winnerName = winner.id.substring(0, 8);
+		// Clear existing announcements before adding game over announcement
+		recentAnnouncements.length = 0;
+		broadcastAnnouncement(`${winnerName} wins!`, 'success', 2000);
 
 		// Reset kills and scores after the game over
 		setTimeout(() => {
@@ -376,11 +364,7 @@ function checkGameStatus(): void {
 
 		// Announce the last snake standing
 		const lastSnakeName = winner.id.substring(0, 8);
-		broadcastAnnouncement(
-			`${lastSnakeName} is last alive!`,
-			'warning',
-			2000
-		);
+		broadcastAnnouncement(`${lastSnakeName} is last alive!`, 'warning', 2000);
 
 		// Respawn dead players after a delay
 		if (players.size - alivePlayers.length > 0) {
@@ -411,7 +395,7 @@ function checkGameStatus(): void {
 }
 
 Bun.serve({
-	port: 3000,
+	port: 4000,
 	fetch(req, server) {
 		// Add CORS headers for browser compatibility
 		if (req.method === 'OPTIONS') {
@@ -593,7 +577,7 @@ function updateSnakeSegments(player: PlayerState): void {
 		if (distance > SEGMENT_DISTANCE * 1.2) {
 			const targetDistance = SEGMENT_DISTANCE;
 			const ratio = targetDistance / distance;
-			
+
 			const newX = prevSegment.position.x - dx * ratio;
 			const newY = prevSegment.position.y - dy * ratio;
 
@@ -628,11 +612,7 @@ function checkCollisions(currentWs: ServerWebSocket<unknown>, currentPlayer: Pla
 
 				const player1Name = playerA.id.substring(0, 8);
 				const player2Name = currentPlayer.id.substring(0, 8);
-				broadcastAnnouncement(
-					`${player1Name} & ${player2Name} collided!`,
-					'error',
-					2000
-				);
+				broadcastAnnouncement(`${player1Name} & ${player2Name} collided!`, 'error', 2000);
 				continue;
 			}
 
@@ -649,24 +629,14 @@ function checkCollisions(currentWs: ServerWebSocket<unknown>, currentPlayer: Pla
 					playerA.score += 5; // Higher score reward for kills
 					playerA.growth += KILL_SEGMENTS_GROWTH; // Add growth for killing opponents
 
-
 					const killerName = playerA.id.substring(0, 8);
 					const killedName = currentPlayer.id.substring(0, 8);
 					broadcastAnnouncement(`${killerName} killed ${killedName}!`, 'warning', 2000);
 
-
 					if (playerA.kills === 5) {
-						broadcastAnnouncement(
-							`${killerName}: 5 kills!`,
-							'warning',
-							2000
-						);
+						broadcastAnnouncement(`${killerName}: 5 kills!`, 'warning', 2000);
 					} else if (playerA.kills === WINNING_KILLS - 1) {
-						broadcastAnnouncement(
-							`${killerName} needs 1 more kill!`,
-							'error',
-							2000
-						);
+						broadcastAnnouncement(`${killerName} needs 1 more kill!`, 'error', 2000);
 					}
 
 					currentWs.send(
@@ -752,11 +722,9 @@ function checkFoodCollisions(player: PlayerState): void {
 			const totalLength = player.segments.length + player.growth;
 			const playerName = player.id.substring(0, 8);
 
-
 			if (player.score % 50 === 0 && player.score > 0 && player.score >= 50) {
 				broadcastAnnouncement(`${playerName}: ${player.score} points!`, 'success', 2000);
 			}
-
 
 			if (totalLength === 50) {
 				broadcastAnnouncement(`${playerName}: 50 segments!`, 'success', 2000);
@@ -788,7 +756,6 @@ function broadcastPlayerStates(): void {
 
 	// Update server time
 	gameState.serverTime = Date.now();
-	
 
 	if (gameState.lastAnnouncementTime && Date.now() - gameState.lastAnnouncementTime > 3000) {
 		recentAnnouncements.length = 0;

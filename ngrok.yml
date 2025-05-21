@@ -1,0 +1,10 @@
+tunnels:
+  http:
+    addr: 3000 # Your main site port
+    proto: http
+  websocket:
+    addr: 5173 # Your WebSocket port
+    proto: http # You can use "http" for WebSocket if it's over HTTP
+version: '3'
+agent:
+  authtoken: 2rGkcj3qBNnReBm46o5s25omgvH_6VHPzE1phVcm6hqmkDWS7
